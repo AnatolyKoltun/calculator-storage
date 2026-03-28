@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package storage;
 
+option go_package = "github.com/AntalyKoltun/calculator-storage/database/proto";
+
 service StorageService {
 //  rpc SaveCalculate (PostRequest) returns (SaveCalculateResponse);
   rpc ListCalculations (ListRequest) returns (CalculationListResponse);

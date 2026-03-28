@@ -23,15 +23,18 @@ func connectToDB() {
 }
 
 type server struct {
-	storage.UnimplementedStorageServiceServer
+	proto.UnimplementedStorageServiceServer
 	// Добавьте поля для БД и NATS
 }
 
-func (s *server) GetCalculation(ctx context.Context, req *storage.GetRequest) (*storage.CalculationResponse, error) {
-	repositories.GetList(ctx context.Context, req *storage.GetRequest)
+func (s *server) GetCalculation(ctx context.Context, req *proto.ListRequest) (*proto.CalculationListResponse, error) {
+	calcRepository := repositories.CalculationRepository{}
+	//repositories.GetList(ctx context.Context, req *proto.CalculationListResponse{})
+	return calcRepository.GetList(ctx context.Context, req *proto.ListRequest)
 }
 
 func main() {
+
 	defer database.Close()
 	connectToDB()
 
@@ -48,7 +51,7 @@ func main() {
 	// 2. Запуск gRPC сервера
 	lis, _ := net.Listen("tcp", ":50051")
 	grpcServer := grpc.NewServer()
-	storage.RegisterStorageServiceServer(grpcServer, &server{})
+	proto.RegisterStorageServiceServer(grpcServer, &server{})
 
 	log.Println("Storage service started on :50051")
 	grpcServer.Serve(lis)
