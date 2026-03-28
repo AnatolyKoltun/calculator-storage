@@ -1,0 +1,30 @@
+syntax = "proto3";
+
+package storage;
+
+service StorageService {
+//  rpc SaveCalculate (PostRequest) returns (SaveCalculateResponse);
+  rpc ListCalculations (ListRequest) returns (CalculationListResponse);
+}
+
+message PostRequest {
+  int32 id = 1;
+  float argument1 = 2;
+  float argument2 = 3;
+  string operator = 4;
+  float result = 5;
+  string createdAt = 6;
+}
+
+message ListRequest {
+  string DateFrom = 1;
+  string DateTo = 2;
+}
+
+//message SaveCalculateResponse {
+//  string error = 1;
+//}
+
+message CalculationListResponse {
+  repeated PostRequest calculations = 1;
+}
