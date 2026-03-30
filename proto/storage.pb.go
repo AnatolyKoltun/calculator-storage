@@ -9,6 +9,7 @@ package proto
 import (
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
+	timestamppb "google.golang.org/protobuf/types/known/timestamppb"
 	reflect "reflect"
 	sync "sync"
 	unsafe "unsafe"
@@ -21,32 +22,32 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type PostRequest struct {
+type Calculation struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	Argument1     float32                `protobuf:"fixed32,2,opt,name=argument1,proto3" json:"argument1,omitempty"`
-	Argument2     float32                `protobuf:"fixed32,3,opt,name=argument2,proto3" json:"argument2,omitempty"`
+	Argument1     float64                `protobuf:"fixed64,2,opt,name=argument1,proto3" json:"argument1,omitempty"`
+	Argument2     float64                `protobuf:"fixed64,3,opt,name=argument2,proto3" json:"argument2,omitempty"`
 	Operator      string                 `protobuf:"bytes,4,opt,name=operator,proto3" json:"operator,omitempty"`
-	Result        float32                `protobuf:"fixed32,5,opt,name=result,proto3" json:"result,omitempty"`
-	CreatedAt     string                 `protobuf:"bytes,6,opt,name=createdAt,proto3" json:"createdAt,omitempty"`
+	Result        float64                `protobuf:"fixed64,5,opt,name=result,proto3" json:"result,omitempty"`
+	CreatedAt     *timestamppb.Timestamp `protobuf:"bytes,6,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
 
-func (x *PostRequest) Reset() {
-	*x = PostRequest{}
+func (x *Calculation) Reset() {
+	*x = Calculation{}
 	mi := &file_proto_storage_proto_msgTypes[0]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
 
-func (x *PostRequest) String() string {
+func (x *Calculation) String() string {
 	return protoimpl.X.MessageStringOf(x)
 }
 
-func (*PostRequest) ProtoMessage() {}
+func (*Calculation) ProtoMessage() {}
 
-func (x *PostRequest) ProtoReflect() protoreflect.Message {
+func (x *Calculation) ProtoReflect() protoreflect.Message {
 	mi := &file_proto_storage_proto_msgTypes[0]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
@@ -58,51 +59,51 @@ func (x *PostRequest) ProtoReflect() protoreflect.Message {
 	return mi.MessageOf(x)
 }
 
-// Deprecated: Use PostRequest.ProtoReflect.Descriptor instead.
-func (*PostRequest) Descriptor() ([]byte, []int) {
+// Deprecated: Use Calculation.ProtoReflect.Descriptor instead.
+func (*Calculation) Descriptor() ([]byte, []int) {
 	return file_proto_storage_proto_rawDescGZIP(), []int{0}
 }
 
-func (x *PostRequest) GetId() int32 {
+func (x *Calculation) GetId() int32 {
 	if x != nil {
 		return x.Id
 	}
 	return 0
 }
 
-func (x *PostRequest) GetArgument1() float32 {
+func (x *Calculation) GetArgument1() float64 {
 	if x != nil {
 		return x.Argument1
 	}
 	return 0
 }
 
-func (x *PostRequest) GetArgument2() float32 {
+func (x *Calculation) GetArgument2() float64 {
 	if x != nil {
 		return x.Argument2
 	}
 	return 0
 }
 
-func (x *PostRequest) GetOperator() string {
+func (x *Calculation) GetOperator() string {
 	if x != nil {
 		return x.Operator
 	}
 	return ""
 }
 
-func (x *PostRequest) GetResult() float32 {
+func (x *Calculation) GetResult() float64 {
 	if x != nil {
 		return x.Result
 	}
 	return 0
 }
 
-func (x *PostRequest) GetCreatedAt() string {
+func (x *Calculation) GetCreatedAt() *timestamppb.Timestamp {
 	if x != nil {
 		return x.CreatedAt
 	}
-	return ""
+	return nil
 }
 
 type ListRequest struct {
@@ -159,7 +160,7 @@ func (x *ListRequest) GetDateTo() string {
 
 type CalculationListResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Calculations  []*PostRequest         `protobuf:"bytes,1,rep,name=calculations,proto3" json:"calculations,omitempty"`
+	Calculations  []*Calculation         `protobuf:"bytes,1,rep,name=calculations,proto3" json:"calculations,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -194,7 +195,7 @@ func (*CalculationListResponse) Descriptor() ([]byte, []int) {
 	return file_proto_storage_proto_rawDescGZIP(), []int{2}
 }
 
-func (x *CalculationListResponse) GetCalculations() []*PostRequest {
+func (x *CalculationListResponse) GetCalculations() []*Calculation {
 	if x != nil {
 		return x.Calculations
 	}
@@ -205,19 +206,20 @@ var File_proto_storage_proto protoreflect.FileDescriptor
 
 const file_proto_storage_proto_rawDesc = "" +
 	"\n" +
-	"\x13proto/storage.proto\x12\astorage\"\xab\x01\n" +
-	"\vPostRequest\x12\x0e\n" +
+	"\x13proto/storage.proto\x12\astorage\x1a\x1fgoogle/protobuf/timestamp.proto\"\xc8\x01\n" +
+	"\vCalculation\x12\x0e\n" +
 	"\x02id\x18\x01 \x01(\x05R\x02id\x12\x1c\n" +
-	"\targument1\x18\x02 \x01(\x02R\targument1\x12\x1c\n" +
-	"\targument2\x18\x03 \x01(\x02R\targument2\x12\x1a\n" +
+	"\targument1\x18\x02 \x01(\x01R\targument1\x12\x1c\n" +
+	"\targument2\x18\x03 \x01(\x01R\targument2\x12\x1a\n" +
 	"\boperator\x18\x04 \x01(\tR\boperator\x12\x16\n" +
-	"\x06result\x18\x05 \x01(\x02R\x06result\x12\x1c\n" +
-	"\tcreatedAt\x18\x06 \x01(\tR\tcreatedAt\"A\n" +
+	"\x06result\x18\x05 \x01(\x01R\x06result\x129\n" +
+	"\n" +
+	"created_at\x18\x06 \x01(\v2\x1a.google.protobuf.TimestampR\tcreatedAt\"A\n" +
 	"\vListRequest\x12\x1a\n" +
 	"\bDateFrom\x18\x01 \x01(\tR\bDateFrom\x12\x16\n" +
 	"\x06DateTo\x18\x02 \x01(\tR\x06DateTo\"S\n" +
 	"\x17CalculationListResponse\x128\n" +
-	"\fcalculations\x18\x01 \x03(\v2\x14.storage.PostRequestR\fcalculations2\\\n" +
+	"\fcalculations\x18\x01 \x03(\v2\x14.storage.CalculationR\fcalculations2\\\n" +
 	"\x0eStorageService\x12J\n" +
 	"\x10ListCalculations\x12\x14.storage.ListRequest\x1a .storage.CalculationListResponseB;Z9github.com/AntalyKoltun/calculator-storage/database/protob\x06proto3"
 
@@ -235,19 +237,21 @@ func file_proto_storage_proto_rawDescGZIP() []byte {
 
 var file_proto_storage_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_proto_storage_proto_goTypes = []any{
-	(*PostRequest)(nil),             // 0: storage.PostRequest
+	(*Calculation)(nil),             // 0: storage.Calculation
 	(*ListRequest)(nil),             // 1: storage.ListRequest
 	(*CalculationListResponse)(nil), // 2: storage.CalculationListResponse
+	(*timestamppb.Timestamp)(nil),   // 3: google.protobuf.Timestamp
 }
 var file_proto_storage_proto_depIdxs = []int32{
-	0, // 0: storage.CalculationListResponse.calculations:type_name -> storage.PostRequest
-	1, // 1: storage.StorageService.ListCalculations:input_type -> storage.ListRequest
-	2, // 2: storage.StorageService.ListCalculations:output_type -> storage.CalculationListResponse
-	2, // [2:3] is the sub-list for method output_type
-	1, // [1:2] is the sub-list for method input_type
-	1, // [1:1] is the sub-list for extension type_name
-	1, // [1:1] is the sub-list for extension extendee
-	0, // [0:1] is the sub-list for field type_name
+	3, // 0: storage.Calculation.created_at:type_name -> google.protobuf.Timestamp
+	0, // 1: storage.CalculationListResponse.calculations:type_name -> storage.Calculation
+	1, // 2: storage.StorageService.ListCalculations:input_type -> storage.ListRequest
+	2, // 3: storage.StorageService.ListCalculations:output_type -> storage.CalculationListResponse
+	3, // [3:4] is the sub-list for method output_type
+	2, // [2:3] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_proto_storage_proto_init() }

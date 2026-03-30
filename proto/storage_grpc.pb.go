@@ -26,7 +26,7 @@ const (
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type StorageServiceClient interface {
-	// rpc SaveCalculate (PostRequest) returns (SaveCalculateResponse);
+	// rpc SaveCalculate (Calculation) returns (SaveCalculateResponse);
 	ListCalculations(ctx context.Context, in *ListRequest, opts ...grpc.CallOption) (*CalculationListResponse, error)
 }
 
@@ -52,7 +52,7 @@ func (c *storageServiceClient) ListCalculations(ctx context.Context, in *ListReq
 // All implementations must embed UnimplementedStorageServiceServer
 // for forward compatibility.
 type StorageServiceServer interface {
-	// rpc SaveCalculate (PostRequest) returns (SaveCalculateResponse);
+	// rpc SaveCalculate (Calculation) returns (SaveCalculateResponse);
 	ListCalculations(context.Context, *ListRequest) (*CalculationListResponse, error)
 	mustEmbedUnimplementedStorageServiceServer()
 }
