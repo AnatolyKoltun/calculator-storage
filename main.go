@@ -17,15 +17,14 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
-//var calcRepository = repositories.CalculationRepository{}
+var calcRepository = repositories.CalculationRepository{}
 
 type server struct {
 	pb.UnimplementedStorageServiceServer
-	repositories.CalculationRepository
 }
 
-// GetCalculation — реализация gRPC метода для получения данных
-func (s *server) GetCalculation(ctx context.Context, req *pb.ListRequest) (*pb.CalculationListResponse, error) {
+// ListCalculations — реализация gRPC метода для получения данных
+func (s *server) ListCalculations(ctx context.Context, req *pb.ListRequest) (*pb.CalculationListResponse, error) {
 	log.Printf("gRPC запрос: ID=%s", req)
 
 	filter := models.FilterRequest{}
@@ -34,19 +33,20 @@ func (s *server) GetCalculation(ctx context.Context, req *pb.ListRequest) (*pb.C
 	filter.DateTo = req.DateTo
 	filter.DateFrom = req.DateFrom
 
-	values, err := s.GetList(ctx, filter)
+	values, err := calcRepository.GetList(ctx, filter)
 
 	if err == nil {
 		calculations.Calculations = make([]*pb.Calculation, len(values))
 
 		for ind, value := range values {
-
-			calculations.Calculations[ind].Id = int32(value.ID)
-			calculations.Calculations[ind].Argument1 = value.Argument1
-			calculations.Calculations[ind].Argument2 = value.Argument2
-			calculations.Calculations[ind].Operator = value.Operator
-			calculations.Calculations[ind].Result = value.Result
-			calculations.Calculations[ind].CreatedAt = timestamppb.New(value.CreatedAt)
+			calculations.Calculations[ind] = &pb.Calculation{
+				Id:        int32(value.ID),
+				Argument1: value.Argument1,
+				Argument2: value.Argument2,
+				Operator:  value.Operator,
+				Result:    value.Result,
+				CreatedAt: timestamppb.New(value.CreatedAt),
+			}
 		}
 	}
 
@@ -54,6 +54,7 @@ func (s *server) GetCalculation(ctx context.Context, req *pb.ListRequest) (*pb.C
 }
 
 func connectToDB() {
+
 	dsn := new(config.DataSourceName)
 	dsn.GetDatabaseURL()
 
@@ -62,6 +63,7 @@ func connectToDB() {
 
 func main() {
 	defer database.Close()
+
 	connectToDB()
 
 	// 1. Подключение к NATS
@@ -98,18 +100,23 @@ func main() {
 		log.Printf("Получено сообщение: %s", string(msg.Data))
 
 		// Парсим JSON
-		var data map[string]interface{}
+		var data *models.Calculation
 		if err := json.Unmarshal(msg.Data, &data); err != nil {
 			log.Printf("Ошибка парсинга: %v", err)
 			msg.Nak() // Не подтверждаем, NATS отправит повторно
 			return
 		}
 
-		// TODO: сохранить в БД
-		log.Printf("Обработано: %+v", data)
+		ctx := context.Background()
+		err = calcRepository.Save(ctx, data)
 
-		// Подтверждаем успешную обработку
-		msg.Ack()
+		if err == nil {
+			log.Printf("Успешно сохранено: %+v", data)
+			msg.Ack()
+		} else {
+			log.Printf("Ошибка сохранения: %v", err)
+			msg.Nak()
+		}
 	}, nats.Durable("storage-consumer"), nats.ManualAck())
 
 	if err != nil {

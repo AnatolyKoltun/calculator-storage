@@ -1,5 +1,5 @@
 # Этап 1: Сборка бинарного файла
-FROM golang:1.22-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 # Устанавливаем необходимые инструменты
 RUN apk add --no-cache git ca-certificates

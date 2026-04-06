@@ -12,8 +12,14 @@ type DataSourceName struct {
 }
 
 func (dsn *DataSourceName) GetDatabaseURL() {
-	if err := godotenv.Load(); err != nil {
-		panic("Файл .env не найден")
+	//if err := godotenv.Load(); err != nil {
+	//	panic("Файл .env не найден")
+	//}
+
+	// Пробуем загрузить .env только если файл существует (для локальной разработки)
+	if _, err := os.Stat(".env"); err == nil {
+		// Файл существует, загружаем
+		_ = godotenv.Load() // Игнорируем ошибку
 	}
 
 	dsn.DatabaseURL = fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
