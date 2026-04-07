@@ -5,15 +5,18 @@ import (
 	"fmt"
 	"log"
 
+	"github.com/AnatolyKoltun/calculator-storage/config"
 	"github.com/jackc/pgx/v5/pgxpool"
 )
 
 var DB *pgxpool.Pool
 
-func Connect(dsn string) {
+func Connect() {
+	dsn := new(config.DataSourceName)
+	dsn.GetDatabaseURL()
 
 	var err error
-	DB, err = pgxpool.New(context.Background(), dsn)
+	DB, err = pgxpool.New(context.Background(), dsn.DatabaseURL)
 
 	if err != nil {
 		log.Fatalf("Не удалось подключиться к БД: %v", err)
